@@ -1,0 +1,14 @@
+.price s {
+    color: #888; /* Gray color for the original price */
+ }
+ 
+ .price .new-price {
+    color: #333; /* Dark color for the discounted price */
+    font-weight: bold;
+ }
+
+ .congrats-message {
+   color: green;
+   font-weight: bold;
+   margin-top: 10px;
+}

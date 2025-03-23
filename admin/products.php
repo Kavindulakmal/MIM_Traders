@@ -1,5 +1,4 @@
 <?php
-
 include '../components/connect.php';
 
 session_start();
@@ -8,17 +7,18 @@ $admin_id = $_SESSION['admin_id'];
 
 if (!isset($admin_id)) {
    header('location:admin_login.php');
+   exit(); 
 }
 
 if (isset($_POST['add_product'])) {
+   
+   $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+   $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+   $details = filter_input(INPUT_POST, 'details', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+   $category = filter_input(INPUT_POST, 'category', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+   $discount = filter_input(INPUT_POST, 'discount', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-   // Sanitize inputs using htmlspecialchars or filter_var with FILTER_SANITIZE_FULL_SPECIAL_CHARS
-   $name = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8');
-   $price = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-   $details = htmlspecialchars($_POST['details'], ENT_QUOTES, 'UTF-8');
-   $category = htmlspecialchars($_POST['category'], ENT_QUOTES, 'UTF-8');
-
-   // Sanitize file names
+   
    $image_01 = htmlspecialchars($_FILES['image_01']['name'], ENT_QUOTES, 'UTF-8');
    $image_size_01 = $_FILES['image_01']['size'];
    $image_tmp_name_01 = $_FILES['image_01']['tmp_name'];
@@ -34,49 +34,70 @@ if (isset($_POST['add_product'])) {
    $image_tmp_name_03 = $_FILES['image_03']['tmp_name'];
    $image_folder_03 = '../uploaded_img/' . $image_03;
 
-   // Check if product name already exists
-   $select_products = $conn->prepare("SELECT * FROM `products` WHERE name = ?");
-   $select_products->execute([$name]);
+   
+   $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
 
-   if ($select_products->rowCount() > 0) {
-      $message[] = 'Product name already exists!';
+   function validate_image($file, $allowed_extensions) {
+      $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+      if (!in_array($file_extension, $allowed_extensions)) {
+         return false; 
+      }
+      if ($file['size'] > 2000000) { 
+         return false; 
+      }
+      if ($file['error'] !== UPLOAD_ERR_OK) {
+         return false; 
+      }
+      return true;
+   }
+
+   if (!validate_image($_FILES['image_01'], $allowed_extensions) || 
+       !validate_image($_FILES['image_02'], $allowed_extensions) || 
+       !validate_image($_FILES['image_03'], $allowed_extensions)) {
+      $message[] = 'Invalid image file(s)!';
    } else {
-      // Insert new product
-      $insert_products = $conn->prepare("INSERT INTO `products`(name, details, price, image_01, image_02, image_03, category) VALUES(?,?,?,?,?,?,?)");
-      $insert_products->execute([$name, $details, $price, $image_01, $image_02, $image_03, $category]);
+      
+      $select_products = $conn->prepare("SELECT * FROM `products` WHERE name = ?");
+      $select_products->execute([$name]);
 
-      if ($insert_products) {
-         // Check image sizes
-         if ($image_size_01 > 2000000 || $image_size_02 > 2000000 || $image_size_03 > 2000000) {
-            $message[] = 'Image size is too large!';
-         } else {
-            // Move uploaded files to the target directory
-            move_uploaded_file($image_tmp_name_01, $image_folder_01);
-            move_uploaded_file($image_tmp_name_02, $image_folder_02);
-            move_uploaded_file($image_tmp_name_03, $image_folder_03);
-            $message[] = 'New product added!';
+      if ($select_products->rowCount() > 0) {
+         $message[] = 'Product name already exists!';
+      } else {
+         
+         $insert_products = $conn->prepare("INSERT INTO `products`(name, details, price, image_01, image_02, image_03, category, discount) VALUES(?,?,?,?,?,?,?,?)");
+         $insert_products->execute([$name, $details, $price, $image_01, $image_02, $image_03, $category, $discount]);
+
+         if ($insert_products) {
+            
+            if (move_uploaded_file($image_tmp_name_01, $image_folder_01) && 
+                move_uploaded_file($image_tmp_name_02, $image_folder_02) && 
+                move_uploaded_file($image_tmp_name_03, $image_folder_03)) {
+               $message[] = 'New product added!';
+            } else {
+               $message[] = 'Failed to upload image(s)!';
+            }
          }
       }
    }
 }
 
 if (isset($_GET['delete'])) {
-   // Delete product and associated files
-   $delete_id = $_GET['delete'];
+   
+   $delete_id = filter_input(INPUT_GET, 'delete', FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
    $delete_product_image = $conn->prepare("SELECT * FROM `products` WHERE id = ?");
    $delete_product_image->execute([$delete_id]);
    $fetch_delete_image = $delete_product_image->fetch(PDO::FETCH_ASSOC);
 
-   // Delete image files
+   
    unlink('../uploaded_img/' . $fetch_delete_image['image_01']);
    unlink('../uploaded_img/' . $fetch_delete_image['image_02']);
    unlink('../uploaded_img/' . $fetch_delete_image['image_03']);
 
-   // Delete product from database
+   
    $delete_product = $conn->prepare("DELETE FROM `products` WHERE id = ?");
    $delete_product->execute([$delete_id]);
 
-   // Delete product from cart and wishlist
+   
    $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE pid = ?");
    $delete_cart->execute([$delete_id]);
 
@@ -84,8 +105,8 @@ if (isset($_GET['delete'])) {
    $delete_wishlist->execute([$delete_id]);
 
    header('location:products.php');
+   exit(); 
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -116,6 +137,10 @@ if (isset($_GET['delete'])) {
             <input type="number" min="0" class="box" required max="9999999999" placeholder="Enter product price" onkeypress="if(this.value.length == 10) return false;" name="price">
          </div>
          <div class="inputBox">
+            <span>Product Discount</span>
+            <input type="number" min="0" max="100" class="box" placeholder="Enter product discount" name="discount" required>
+         </div>
+         <div class="inputBox">
             <span>Image 01 (required)</span>
             <input type="file" name="image_01" accept="image/jpg, image/jpeg, image/png, image/webp" class="box" required>
          </div>
@@ -133,7 +158,7 @@ if (isset($_GET['delete'])) {
          </div>
          <div class="inputBox">
             <span>Category</span>
-            <select name="category" class="box">
+            <select name="category" class="box" required>
                <option value="">Select a category</option>
                <option value="paints">Paints</option>
                <option value="garden">Garden</option>
@@ -160,11 +185,11 @@ if (isset($_GET['delete'])) {
          while ($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)) {
       ?>
             <div class="box">
-               <img src="../uploaded_img/<?= $fetch_products['image_01']; ?>" alt="">
-               <div class="name"><?= $fetch_products['name']; ?></div>
-               <div class="price">LKR <span><?= $fetch_products['price']; ?></span>/-</div>
-               <div class="details"><span><?= $fetch_products['details']; ?></span></div>
-               <div class="category"><span><?= $fetch_products['category']; ?></span></div>
+               <img src="../uploaded_img/<?= htmlspecialchars($fetch_products['image_01'], ENT_QUOTES, 'UTF-8'); ?>" alt="">
+               <div class="name"><?= htmlspecialchars($fetch_products['name'], ENT_QUOTES, 'UTF-8'); ?></div>
+               <div class="price">LKR <span><?= htmlspecialchars($fetch_products['price'], ENT_QUOTES, 'UTF-8'); ?></span>/-</div>
+               <div class="details"><span><?= htmlspecialchars($fetch_products['details'], ENT_QUOTES, 'UTF-8'); ?></span></div>
+               <div class="category"><span><?= htmlspecialchars($fetch_products['category'], ENT_QUOTES, 'UTF-8'); ?></span></div>
                <div class="flex-btn">
                   <a href="update_product.php?update=<?= $fetch_products['id']; ?>" class="option-btn">Update</a>
                   <a href="products.php?delete=<?= $fetch_products['id']; ?>" class="delete-btn" onclick="return confirm('Delete this product?');">Delete</a>

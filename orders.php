@@ -55,7 +55,31 @@ if(isset($_SESSION['user_id'])){
       <p>payment method : <span><?= $fetch_orders['method']; ?></span></p>
       <p>your orders : <span><?= $fetch_orders['total_products']; ?></span></p>
       <p>total price : <span>LKR <?= $fetch_orders['total_price']; ?>.00</span></p>
-      <p> payment status : <span style="color:<?php if($fetch_orders['payment_status'] == 'pending'){ echo 'red'; }else{ echo 'green'; }; ?>"><?= $fetch_orders['payment_status']; ?></span> </p>
+      <p>Order Status: 
+         <span style="color: 
+            <?php
+               switch ($fetch_orders['payment_status']) {
+                  case 'placed':
+                  case 'confirmed':
+                     echo 'red'; 
+                     break;
+                  case 'processed':
+                  case 'shipped':
+                  case 'delivery':
+                     echo 'orange'; 
+                     break;
+                  case 'delivered':
+                     echo 'green'; 
+                     break;
+                  default:
+                     echo 'black'; 
+                     break;
+               }
+            ?>
+         ">
+         <?= $fetch_orders['payment_status']; ?>
+         </span>
+      </p>
    </div>
    <?php
       }

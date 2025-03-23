@@ -1,5 +1,4 @@
 <?php
-
 include '../components/connect.php';
 
 session_start();
@@ -16,10 +15,11 @@ if (isset($_POST['update'])) {
    $name = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8'); // Sanitize name
    $price = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION); // Sanitize price
    $details = htmlspecialchars($_POST['details'], ENT_QUOTES, 'UTF-8'); // Sanitize details
+   $discount = filter_var($_POST['discount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION); // Sanitize discount
 
    // Update product details
-   $update_product = $conn->prepare("UPDATE `products` SET name = ?, price = ?, details = ? WHERE id = ?");
-   $update_product->execute([$name, $price, $details, $pid]);
+   $update_product = $conn->prepare("UPDATE `products` SET name = ?, price = ?, details = ?, discount = ? WHERE id = ?");
+   $update_product->execute([$name, $price, $details, $discount, $pid]);
 
    $message[] = 'Product updated successfully!';
 
@@ -80,7 +80,6 @@ if (isset($_POST['update'])) {
       }
    }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -127,6 +126,8 @@ if (isset($_POST['update'])) {
             <input type="text" name="name" required class="box" maxlength="100" placeholder="Enter product name" value="<?= $fetch_products['name']; ?>">
             <span>Update Price</span>
             <input type="number" name="price" required class="box" min="0" max="9999999999" placeholder="Enter product price" onkeypress="if(this.value.length == 10) return false;" value="<?= $fetch_products['price']; ?>">
+            <span>Update Discount</span>
+            <input type="number" name="discount" required class="box" min="0" max="100" placeholder="Enter product discount" value="<?= $fetch_products['discount']; ?>">
             <span>Update Details</span>
             <textarea name="details" class="box" required cols="30" rows="10"><?= $fetch_products['details']; ?></textarea>
             <span>Update Image 01</span>

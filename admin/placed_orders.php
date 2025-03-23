@@ -17,7 +17,7 @@ if(isset($_POST['update_payment'])){
    $payment_status = filter_var($payment_status, FILTER_SANITIZE_SPECIAL_CHARS); // Fixed
    $update_payment = $conn->prepare("UPDATE `orders` SET payment_status = ? WHERE id = ?");
    $update_payment->execute([$payment_status, $order_id]);
-   $message[] = 'Payment status updated!';
+   $message[] = 'Order status updated!';
 }
 
 if(isset($_GET['delete'])){
@@ -70,7 +70,12 @@ if(isset($_GET['delete'])){
          <input type="hidden" name="order_id" value="<?= htmlspecialchars($fetch_orders['id']); ?>">
          <select name="payment_status" class="select">
             <option selected disabled><?= htmlspecialchars($fetch_orders['payment_status']); ?></option>
-            <option value="pending">Pending</option>
+            <option value="placed">Placed</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="processed">Processed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivery">Delivery</option>
+            <option value="delivered">Delivered</option>
             <option value="completed">Completed</option>
          </select>
          <div class="flex-btn">
