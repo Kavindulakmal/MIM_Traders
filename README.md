@@ -61,7 +61,7 @@ To enhance user experience and differentiate MIM Traders Online Store from compe
 ## Default Login Credentials
 - **User Login:**
   - Email: `user1@gmail.com`
-  - Password: Set during registration
+  - Password: `1234` (default, changeable)
 - **Admin Login:**
   - Username: `admin`
   - Password: `111` (default, changeable)
