@@ -72,6 +72,18 @@ Contributions are welcome! Please submit a pull request or open an issue to repo
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+![new nav](https://github.com/user-attachments/assets/954b0a57-5862-4c8d-a09b-8c8cd58fe680)
+![screencapture-localhost-8012-hardwareshop-cart-php-2025-03-22-17_32_52](https://github.com/user-attachments/assets/bf0ff00e-d73e-4e8f-92c2-5ee130c9f176)
+![screencapture-localhost-8012-hardwareshop-checkout-php-2025-03-22-17_40_28](https://github.com/user-attachments/assets/949e60cd-0e1d-4a9e-b60c-93ce55b88bfa)
+![screencapture-localhost-8012-hardwareshop-quick-view-php-2025-03-22-19_23_10](https://github.com/user-attachments/assets/decf99c5-54c5-4d99-b19b-a69178907f2f)
+![screencapture-localhost-8012-hardwareshop-quick-view-php-2025-03-22-19_58_13](https://github.com/user-attachments/assets/3e9f3e32-376b-48dd-9444-d33aa870a436)
+![screencapture-localhost-8012-hardwareshop-quick-view-php-2025-03-22-20_10_53](https://github.com/user-attachments/assets/678612e4-3cb6-4805-9870-ee270e9d8923)
+
+
+
+
+
+
 ### Contributing
 Pull requests are welcomed. For major changes, please open an issue first to discuss what you would like to change. Thanks!
 
