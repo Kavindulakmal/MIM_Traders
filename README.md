@@ -41,7 +41,7 @@ To enhance user experience and differentiate MIM Traders Online Store from compe
 1. Download and install [XAMPP](https://www.apachefriends.org/index.html).
 2. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/mim-traders.git
+   git clone https://github.com/Kavindulakmal/mim-traders.git
    ```
 3. Move all files to the XAMPP htdocs directory:
    ```bash
@@ -55,8 +55,8 @@ To enhance user experience and differentiate MIM Traders Online Store from compe
    SOURCE database_file.sql;
    ```
 6. Open the project in a browser:
-   - User Portal: [http://localhost:8012/hardwareshop/home.php](http://localhost:8012/hardwareshop/home.php)
-   - Admin Portal: [http://localhost:8012/hardwareshop/admin/dashboard.php](http://localhost:8012/hardwareshop/admin/dashboard.php)
+   - User Portal: [http://localhost:8012/MIM_Traders/home.php](http://localhost:8012/hardwareshop/home.php)
+   - Admin Portal: [http://localhost:8012/MIM_Traders/admin/dashboard.php](http://localhost:8012/hardwareshop/admin/dashboard.php)
 
 ## Default Login Credentials
 - **User Login:**
