@@ -1,0 +1,29 @@
+---
+# PVC for MySQL data persistence
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: mim-traders
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard   # Change to your cluster's StorageClass (e.g. gp2, managed-premium)
+
+---
+# PVC for user-uploaded product images
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: uploaded-img-pvc
+  namespace: mim-traders
+spec:
+  accessModes:
+    - ReadWriteMany   # Allows multiple PHP pods to read/write uploads
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: standard   # Use a RWX-capable StorageClass (e.g. EFS, NFS, azureFile)

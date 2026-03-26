@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mim-traders-config
+  namespace: mim-traders
+data:
+  # MySQL connection settings (non-sensitive)
+  MYSQL_HOST: "mysql-service"
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: "shop_db"
+  # PHP app settings
+  APP_ENV: "production"
+  APP_PORT: "80"

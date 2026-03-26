@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+  namespace: mim-traders
+# This ConfigMap is used to auto-import the shop_db.sql schema on first boot.
+#
+# Option A (recommended for CI/CD):
+#   Build a custom MySQL Docker image that copies shop_db.sql into
+#   /docker-entrypoint-initdb.d/ at image build time, then reference
+#   that image in mysql-statefulset.yaml instead of mysql:8.0.
+#
+# Option B (dev/test only - paste SQL inline):
+#   Uncomment and populate the `data` block below with the contents of shop_db.sql.
+#   Keep in mind ConfigMaps have a ~1MB limit.
+#
+# data:
+#   shop_db.sql: |
+#     -- Paste the full contents of shop_db.sql here
+#     CREATE TABLE IF NOT EXISTS users ( ... );
+#     ...
